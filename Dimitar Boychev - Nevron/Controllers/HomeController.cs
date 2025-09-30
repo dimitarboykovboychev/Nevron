@@ -14,8 +14,11 @@ public class HomeController: Controller
     {
         var list = GetNumberList();
         var rand = new Random();
-        int number = rand.Next(1, 101); // Random number between 1 and 100
+        
+        int number = rand.Next(1, 101); // Random int number between 1 and 100
+        
         list.Add(number);
+        
         HttpContext.Session.SetObject(SessionKey, list);
 
         return Json(new { numbers = list, count = list.Count });
@@ -25,6 +28,7 @@ public class HomeController: Controller
     public JsonResult ClearNumbers()
     {
         HttpContext.Session.SetObject(SessionKey, new List<int>());
+        
         return Json(new { numbers = new List<int>(), count = 0 });
     }
 
@@ -32,7 +36,9 @@ public class HomeController: Controller
     public JsonResult SumNumbers()
     {
         var list = GetNumberList();
+
         int sum = list.Sum();
+
         return Json(new { sum });
     }
 
@@ -53,6 +59,7 @@ public static class SessionExtensions
     public static T? GetObject<T>(this ISession session, string key)
     {
         var value = session.GetString(key);
+
         return value == null ? default : System.Text.Json.JsonSerializer.Deserialize<T>(value);
     }
 }

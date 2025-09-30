@@ -1,47 +1,68 @@
 ﻿@{
-    ViewBag.Title = "Session Number Manager";
+    Layout = null;
 }
 
-<h2>Session Number Manager</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Session Number Manager</title>
 
-<button id="addBtn">Add Number</button>
-<button id="clearBtn">Clear Numbers</button>
-<button id="sumBtn">Sum Numbers</button>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="mb-4">Session Number Manager</h2>
 
-<div>
-    <h4>Numbers:</h4>
-    <ul id="numberList"></ul>
-    <p>Total Count: <span id="count">0</span></p>
-    <p>Sum: <span id="sum">0</span></p>
-</div>
+    <div class="d-flex gap-3 mb-4">
+        <button id="addBtn" class="btn btn-outline-secondary rounded">Add Number</button>
+        <button id="sumBtn" class="btn btn-outline-secondary rounded">Sum Numbers</button>
+        <button id="clearBtn" class="btn btn-secondary rounded">Clear Numbers</button>
+    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function updateList(numbers) {
-        $("#numberList").empty();
-        numbers.forEach(n => {
-            $("#numberList").append(`<li>${n}</li>`);
+    <div id="numberInputs" class="mb-3">
+        <ul id="numberList" class="list-unstyled mb-4"></ul>
+    </div>
+
+    <div class="gap-3 mb-3">
+        <p>Count: <span id="count">0</span></p>
+        <p>Sum: <span id="sum">0</span></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateList(numbers) {
+            $("#numberList").empty();
+            numbers.forEach(n => {
+                $("#numberList").append(`<li>${n}</li>`);
+            });
+        }
+
+        $("#addBtn").click(function () {
+            $.post("/Home/AddNumber", function (data) {
+                updateList(data.numbers);
+                $("#count").text(data.count);
+            });
         });
-    }
 
-    $("#addBtn").click(function () {
-        $.post("/Home/AddNumber", function (data) {
-            updateList(data.numbers);
-            $("#count").text(data.count);
+        $("#clearBtn").click(function () {
+            $.post("/Home/ClearNumbers", function (data) {
+                updateList(data.numbers);
+                $("#count").text(data.count);
+                $("#sum").text("0");
+            });
         });
-    });
 
-    $("#clearBtn").click(function () {
-        $.post("/Home/ClearNumbers", function (data) {
-            updateList(data.numbers);
-            $("#count").text(data.count);
-            $("#sum").text("0");
+        $("#sumBtn").click(function () {
+            $.get("/Home/SumNumbers", function (data) {
+                $("#sum").text(data.sum);
+            });
         });
-    });
-
-    $("#sumBtn").click(function () {
-        $.get("/Home/SumNumbers", function (data) {
-            $("#sum").text(data.sum);
-        });
-    });
-</script>
+    </script>
+</body>
+</html>
