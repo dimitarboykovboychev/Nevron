@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Session Number Manager";
+}
+
+<h2>Session Number Manager</h2>
+
+<button id="addBtn">Add Number</button>
+<button id="clearBtn">Clear Numbers</button>
+<button id="sumBtn">Sum Numbers</button>
+
+<div>
+    <h4>Numbers:</h4>
+    <ul id="numberList"></ul>
+    <p>Total Count: <span id="count">0</span></p>
+    <p>Sum: <span id="sum">0</span></p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateList(numbers) {
+        $("#numberList").empty();
+        numbers.forEach(n => {
+            $("#numberList").append(`<li>${n}</li>`);
+        });
+    }
+
+    $("#addBtn").click(function () {
+        $.post("/Home/AddNumber", function (data) {
+            updateList(data.numbers);
+            $("#count").text(data.count);
+        });
+    });
+
+    $("#clearBtn").click(function () {
+        $.post("/Home/ClearNumbers", function (data) {
+            updateList(data.numbers);
+            $("#count").text(data.count);
+            $("#sum").text("0");
+        });
+    });
+
+    $("#sumBtn").click(function () {
+        $.get("/Home/SumNumbers", function (data) {
+            $("#sum").text(data.sum);
+        });
+    });
+</script>
