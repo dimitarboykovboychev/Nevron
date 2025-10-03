@@ -7,7 +7,7 @@ public class HomeController: Controller
 
     public ActionResult Index()
     {
-        this.ViewData[SessionNumbersKey] = this.GetNumberListFromSession();
+        this.ViewData[SessionNumbersKey] = this.GetNumbersFromSession();
         this.ViewData[SessionSumKey] = this.GetSumFromSession();
 
         return View();
@@ -16,7 +16,7 @@ public class HomeController: Controller
     [HttpPost]
     public JsonResult AddNumber()
     {
-        var list = GetNumberListFromSession();
+        var list = GetNumbersFromSession();
         var rand = new Random();
         
         int number = rand.Next(1, 101); // Random int number between 1 and 100
@@ -39,7 +39,7 @@ public class HomeController: Controller
     [HttpGet]
     public JsonResult SumNumbers()
     {
-        var list = GetNumberListFromSession();
+        var list = GetNumbersFromSession();
 
         int sum = list.Sum();
 
@@ -48,7 +48,7 @@ public class HomeController: Controller
         return Json(new { sum });
     }
 
-    private List<int> GetNumberListFromSession()
+    private List<int> GetNumbersFromSession()
     {
         return this.HttpContext.Session.GetObject<List<int>>(SessionNumbersKey) ?? new List<int>();
     }
