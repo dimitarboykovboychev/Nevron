@@ -2,24 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 
 public class HomeController: Controller
 {
-    private const string SessionKey = "NumberList";
+    private const string SessionNumbersKey = "Numbers";
+    private const string SessionSumKey = "Sum";
 
     public ActionResult Index()
     {
+        this.ViewData[SessionNumbersKey] = this.GetNumberListFromSession();
+        this.ViewData[SessionSumKey] = this.GetSumFromSession();
+
         return View();
     }
 
     [HttpPost]
     public JsonResult AddNumber()
     {
-        var list = GetNumberList();
+        var list = GetNumberListFromSession();
         var rand = new Random();
         
         int number = rand.Next(1, 101); // Random int number between 1 and 100
         
         list.Add(number);
         
-        HttpContext.Session.SetObject(SessionKey, list);
+        this.HttpContext.Session.SetObject(SessionNumbersKey, list);
 
         return Json(new { numbers = list, count = list.Count });
     }
@@ -27,7 +31,7 @@ public class HomeController: Controller
     [HttpPost]
     public JsonResult ClearNumbers()
     {
-        HttpContext.Session.SetObject(SessionKey, new List<int>());
+        this.HttpContext.Session.SetObject(SessionNumbersKey, new List<int>());
         
         return Json(new { numbers = new List<int>(), count = 0 });
     }
@@ -35,20 +39,26 @@ public class HomeController: Controller
     [HttpGet]
     public JsonResult SumNumbers()
     {
-        var list = GetNumberList();
+        var list = GetNumberListFromSession();
 
         int sum = list.Sum();
+
+        this.HttpContext.Session.SetObject(SessionSumKey, sum);
 
         return Json(new { sum });
     }
 
-    private List<int> GetNumberList()
+    private List<int> GetNumberListFromSession()
     {
-        return HttpContext.Session.GetObject<List<int>>(SessionKey) ?? new List<int>();
+        return this.HttpContext.Session.GetObject<List<int>>(SessionNumbersKey) ?? new List<int>();
+    }
+
+    private int GetSumFromSession()
+    {
+        return this.HttpContext.Session.GetObject<int>(SessionSumKey);
     }
 }
 
-// Extension methods for session object serialization
 public static class SessionExtensions
 {
     public static void SetObject(this ISession session, string key, object value)

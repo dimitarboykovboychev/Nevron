@@ -1,5 +1,9 @@
 ﻿@{
     Layout = null;
+
+    var numberList = ViewData["Numbers"] as List<int> ?? new List<int>();
+    var sum = ViewData["Sum"] as int? ?? 0;
+    var count = numberList.Count;
 }
 
 <!DOCTYPE html>
@@ -26,12 +30,19 @@
     </div>
 
     <div id="numberInputs" class="mb-3">
-        <ul id="numberList" class="list-unstyled mb-4"></ul>
+        <ul id="numberList" class="list-unstyled mb-4">
+        @{
+            foreach (var number in numberList)
+            {
+                <li>@number</li>
+            }
+        }
+        </ul>
     </div>
 
     <div class="gap-3 mb-3">
-        <p>Count: <span id="count">0</span></p>
-        <p>Sum: <span id="sum">0</span></p>
+        <p>Count: <span id="count">@count</span></p>
+        <p>Sum: <span id="sum">@sum</span></p>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
